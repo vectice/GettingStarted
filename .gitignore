@@ -21,3 +21,5 @@ Notebooks/Tutorial_API_token.json
 *.jpg
 *.json
 *.csv.*
+
+venv
