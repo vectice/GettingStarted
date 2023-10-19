@@ -11,6 +11,9 @@ ip = IPython.get_ipython()
 
 
 def cell_vars(offset=1):
+    """
+    Not used currently but this gets the content of the entire notebook and parses for variables.
+    """
     import io
     from contextlib import redirect_stdout
 
@@ -29,16 +32,12 @@ def cell_vars(offset=1):
 
 
 def _get_local_variables():
+    """
+    Used by autolog cell to get the content of the cell. This is used to parse for variables.
+    """
     cell_content = ip.get_parent()['content']['code']
     cell_info = ip.get_parent()
     return cell_content, cell_info
-
-
-
-
-def _check_registred_event(ip):
-    # This will unregister our event and prevent stacking 
-    ip.events.unregister('post_run_cell', _get_local_variables)
 
 
 def _identify_assets(local_vars):
@@ -53,6 +52,22 @@ def _identify_assets(local_vars):
     train_test = get_x_y(vectice_data)
 
     model_metrics = _get_model_metrics(vectice_data, cell_content)
+
+    graph = get_graph(local_vars)
+
+    return sklearn_model, pandas_df, train_test, model_metrics, graph, cell_content
+
+
+def _identify_notebook_assets(local_vars):
+    vectice_data = {variable: local_vars[variable] for variable in local_vars.keys()}
+
+    sklearn_model = get_model(vectice_data)
+
+    pandas_df = get_df(vectice_data)
+
+    train_test = get_x_y(vectice_data)
+
+    model_metrics = _get_model_metrics(vectice_data, None)
 
     graph = get_graph(local_vars)
 
@@ -76,10 +91,11 @@ def get_model(vectice_data):
 
 
 def get_df(vectice_data):
+    datasets = []
     for key in vectice_data.keys():
         if isinstance(vectice_data[key], DataFrame):
-            return copy.deepcopy(vectice_data[key])
-    return None
+            datasets.append(copy.deepcopy(vectice_data[key]))
+    return datasets
 
 
 def _format_model(model, model_metrics):
@@ -94,6 +110,8 @@ def _format_model(model, model_metrics):
 def _get_model_metrics(vectice_data, cell_content):
     # check the variable instantiation
     from sklearn.metrics import _regression
+    if not cell_content:
+        return {}
     regression_functions = dir(_regression)
     metrics = []
     metrics_return = {}
@@ -123,7 +141,7 @@ def get_graph(local_vars):
     return None
 
 
-def _log_to_vectice(model = None, dataset = None, train_test = None, model_metrics = None, graph = None):
+def _log_to_vectice(model = None, dataset = None, train_test = None, model_metrics = None, graph = None, cell_content = None):
     import vectice
 
     vec = vectice.connect(
@@ -133,16 +151,24 @@ def _log_to_vectice(model = None, dataset = None, train_test = None, model_metri
 
     model_iteration = phase.create_iteration()
 
-    # if train_test:
-    #     x_array, y_array = _get_arrays(train_test)
-
     if model:
         model = _format_model(model, model_metrics)
         model_iteration.log(model)
     if dataset is not None:
         from vectice import Dataset
-        vec_dataset = Dataset.clean(vectice.FileResource("dummy.csv", dataframes=dataset))
-        model_iteration.log(vec_dataset)
+        for ds in dataset:
+            import re
+            from ast import literal_eval
+            try:
+                match = re.findall(r"(?<=read_csv\().*[^\)\n]", cell_content)
+                resource = literal_eval(match[0]) if len(match) >= 1 else None
+            except TypeError:
+                resource = None
+            if resource:
+                vec_dataset = Dataset.clean(vectice.FileResource(resource, dataframes=ds))
+            else:
+                vec_dataset = Dataset.clean(vectice.FileResource("dummy.csv", dataframes=ds))
+            model_iteration.log(vec_dataset)
 
     if graph:
         import tempfile
@@ -153,11 +179,21 @@ def _log_to_vectice(model = None, dataset = None, train_test = None, model_metri
         model_iteration.log(rf"{temp_dir.name}\test.png")
 
 
-def autolog(local_vars):
-    # from . import vw
-    # ip.events.register('post_run_cell', _get_local_variables)
-    model, dataset, train_test, model_metrics, graph = _identify_assets(local_vars)
-    _log_to_vectice(model, dataset, train_test, model_metrics, graph)
+def autolog_cell():
+    """
+    Get the cell content and parse for the variables only
+    """
+    local_vars = ip.user_global_ns  # Gets the Ipython sessions global variables
+    model, dataset, train_test, model_metrics, graph, cell_content = _identify_assets(local_vars)
+    _log_to_vectice(model, dataset, train_test, model_metrics, graph, cell_content)
 
+
+def autolog_notebook():
+    """
+    Ignore the cell contents and capture all variables
+    """
+    local_vars = ip.user_global_ns  # Gets the Ipython sessions global variables
+    model, dataset, train_test, model_metrics, graph = _identify_notebook_assets(local_vars)
+    _log_to_vectice(model, dataset, train_test, model_metrics, graph)
 
 

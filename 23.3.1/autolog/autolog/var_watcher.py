@@ -1,3 +1,6 @@
+# NB ===== Not used =====
+# This is how we can use Ipython events to capture or inject functionality.
+
 from IPython import InteractiveShell
 
 class VarWatcher(object):
