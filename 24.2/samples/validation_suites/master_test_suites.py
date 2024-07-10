@@ -1,5 +1,5 @@
 # import the Vectice provided probability of default validation tests
-from vectice.models.test_library.probability_of_default_test import (
+from vectice.models.test_library.binary_classification_test import (
     plot_roc_curve,
     conf_matrix,
     explainability,
@@ -102,8 +102,8 @@ DATA_PRIVACY_SUITE_MAP_TEST = {
 # your validations in your notebook.
 
 # Accumulation and mapping of all validation tests to be run
-MASTER_SUITE_MAP_TEST = {
-    "probability_of_default_validation": [
+CUSTOM_TEST_PD_MODEL = {
+    "binary_suite": [
         plot_roc_curve,
         conf_matrix,
         explainability,
