@@ -1,4 +1,4 @@
-# import the Vectice provided probability of default tests
+# import the Vectice provided probability of default validation tests
 from vectice.models.test_library.probability_of_default_test import (
     plot_roc_curve,
     conf_matrix,
@@ -8,7 +8,7 @@ from vectice.models.test_library.probability_of_default_test import (
     prediction_drift,
 )
 
-# import the Vectice provided regression tests
+# import the Vectice provided regression validation tests
 from vectice.models.test_library.regression_test import (
     plot_residuals,
     r2_score,
@@ -18,7 +18,7 @@ from vectice.models.test_library.regression_test import (
     prediction_drift,
 )
 
-# import the Vectice provided time series tests
+# import the Vectice provided time series validation tests
 from vectice.models.test_library.time_series_test import (
     trend_analysis,
     seasonality_check,
@@ -28,14 +28,20 @@ from vectice.models.test_library.time_series_test import (
 )
 
 
-# custom data quality tests
+# custom data quality validation tests
 from data_quality_tests import (
     test_dataset_split,
     iqr_and_outliers,
 )
 
+# custom data privacy validation tests
+from data_privacy_tests import (
+    sensitive_data_check,
+    sensitive_data_type_check,
+    pii_check,
+)
 
-# Map the tests to be used for regression
+# Map the tests to be used for regression validation
 REGRESSION_FULL_SUITE_MAP_TEST = {
     "roc": plot_residuals,
     "cm": r2_score,
@@ -52,7 +58,7 @@ REGRESSION_FULL_SUITE_MAP_TEST = {
     ],
 }
 
-# Map the tests to be used for time series
+# Map the tests to be used for time series validation
 TIME_SERIES_FULL_SUITE_MAP_TEST = {
     "trend": trend_analysis,
     "seasonality": seasonality_check,
@@ -68,13 +74,34 @@ TIME_SERIES_FULL_SUITE_MAP_TEST = {
     ],
 }
 
+# Map the tests to be used for data quality
+DATA_QUALITY_SUITE_MAP_TEST = {
+    "dataset_split": test_dataset_split,
+    "iqr_and_outliers": iqr_and_outliers,
+    "full_dataset_validation": [
+        test_dataset_split,
+        iqr_and_outliers,
+    ],
+}
+
+# Map the tests to be used for data privacy validation
+DATA_PRIVACY_SUITE_MAP_TEST = {
+    "sensitive_data_check": sensitive_data_check,
+    "pii_check": pii_check,
+    "sensitive_data_type_check": sensitive_data_type_check,
+    "data_privacy_full_suite": [
+        sensitive_data_check,
+        pii_check,
+        sensitive_data_type_check,
+    ],
+}
 
 # The master test suite file is used to map all tests which can be run.
 # The tests can be provided by Vectice or custom functions from your test suite modules.
 # Vectice uses this configuration to simply identify available tests, when you run
 # your validations in your notebook.
 
-# Accumulation and mapping of all tests to be run
+# Accumulation and mapping of all validation tests to be run
 MASTER_SUITE_MAP_TEST = {
     "probability_of_default_validation": [
         plot_roc_curve,
