@@ -41,6 +41,10 @@ from data_privacy_tests import (
     pii_check,
 )
 
+from custom_tests import (
+    plot_correlation_matrix
+)
+
 # Map the tests to be used for regression validation
 REGRESSION_FULL_SUITE_MAP_TEST = {
     "roc": plot_residuals,
@@ -115,4 +119,7 @@ CUSTOM_TEST_PD_MODEL = {
         test_dataset_split,
         iqr_and_outliers,
     ],
+    "custom":[
+        plot_correlation_matrix,
+    ]
 }
