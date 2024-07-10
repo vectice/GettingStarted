@@ -114,14 +114,3 @@ def iqr_and_outliers(
         tables=[],
         attachments=files,
     )
-
-
-# Map the tests to be used
-DATA_QUALITY_SUITE_MAP_TEST = {
-    "dataset_split": test_dataset_split,
-    "iqr_and_outliers": iqr_and_outliers,
-    "full_dataset_validation": [
-        test_dataset_split,
-        iqr_and_outliers,
-    ],
-}

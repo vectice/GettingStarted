@@ -146,16 +146,3 @@ def sensitive_data_type_check(
         tables=[table],
         attachments=[],
     )
-
-
-# Map the tests to be used
-DATA_PRIVACY_SUITE_MAP_TEST = {
-    "sensitive_data_check": sensitive_data_check,
-    "pii_check": pii_check,
-    "sensitive_data_type_check": sensitive_data_type_check,
-    "data_privacy_full_suite": [
-        sensitive_data_check,
-        pii_check,
-        sensitive_data_type_check,
-    ],
-}
