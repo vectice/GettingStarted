@@ -1,4 +1,4 @@
-## All test modules below can be added to your test suite to by run on any models or datasets
+## All tests and suites below can be added to your test suite to by run on any models or datasets and available inside Vectice default validation Library
 | **Category**                 | **Test Name**                    | **Function**                         |
 |------------------------------|----------------------------------|--------------------------------------|
 | **Classification Tests**     | ROC Curve                        | `plot_roc_curve`                     |
