@@ -10,19 +10,19 @@ from vectice.models.test_library.binary_classification_test import (
 
 
 # custom data quality validation tests
-from data_quality_modules import (
+from test_modules.data_quality_modules import (
     test_dataset_split,
     iqr_and_outliers,
 )
 
 # custom data privacy validation tests
-from data_privacy_modules import (
+from test_modules.data_privacy_modules import (
     sensitive_data_check,
     sensitive_data_type_check,
     pii_check,
 )
 
-from correlation_matrix_module import (
+from test_modules.correlation_matrix_module import (
     plot_correlation_matrix
 )
 
