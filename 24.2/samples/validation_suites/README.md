@@ -1,4 +1,4 @@
-## List of default validation tests provided by Vectice with source code from PiML
+## List of validation tests provided by Vectice with source code from PiML
 | **Category**                 | **Test Name**                    | **Function**                         |
 |------------------------------|----------------------------------|--------------------------------------|
 | **Classification Tests**     | ROC Curve                        | `plot_roc_curve`                     |
