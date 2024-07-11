@@ -27,7 +27,7 @@ from test_modules.correlation_matrix_module import (
 )
 
 
-# The master test suite file is used to map all suite of test which can be run.
+# The master test suite file is used to map all ADDITIONAL suite of test which can be run.
 # The tests can be provided by Vectice or custom functions from your modules.
 # Vectice uses this configuration to simply identify and bundle available tests into suite, when you run
 # your validations in your notebook.
@@ -42,13 +42,14 @@ PD_model_suite= {
         label_drift,
         prediction_drift,
     ],
-    "data_quality": [
+    "data_quality_ext": [
         test_dataset_split,
         iqr_and_outliers,
-    ],
-    "custom":[
         plot_correlation_matrix,
-    ]
+    ],
+    "corr_matrix_ext": [
+        plot_correlation_matrix,
+    ],
 }
 
 # Map the tests to be used for data privacy validation
